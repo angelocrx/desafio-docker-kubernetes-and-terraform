@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mural.fullname" . }}-migrations
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: mural-migrations
+data:
+  001_init.sql: |
+    {{- .Files.Get "files/migrations/001_init.sql" | nindent 4 }}
+  002_seed.sql: |
+    {{- .Files.Get "files/migrations/002_seed.sql" | nindent 4 }}

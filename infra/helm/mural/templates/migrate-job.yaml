@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mural-migrate
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: mural-migrate
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: postgres:16-alpine
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Aguardando o banco de dados ficar pronto..."
+              until pg_isready -h db -p 5432 -U {{ .Values.postgres.user }}; do
+                sleep 2
+              done
+              echo "Executando migrações (001_init.sql e 002_seed.sql)..."
+              psql -h db -U {{ .Values.postgres.user }} -d {{ .Values.postgres.dbName }} -f /migrations/001_init.sql
+              psql -h db -U {{ .Values.postgres.user }} -d {{ .Values.postgres.dbName }} -f /migrations/002_seed.sql
+              echo "Migrações executadas com sucesso!"
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mural.fullname" . }}-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: migration-files
+              mountPath: /migrations
+      volumes:
+        - name: migration-files
+          configMap:
+            name: {{ include "mural.fullname" . }}-migrations

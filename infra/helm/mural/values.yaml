@@ -1,0 +1,28 @@
+namespace: aula-docker
+
+global:
+  environment: production
+
+postgres:
+  image: "postgres:16-alpine"
+  user: "postgres"
+  password: "123456"
+  dbName: "aula-docker-mb"
+  storage: "1Gi"
+
+api:
+  image: "docker-api"
+  tag: "latest"
+  replicaCount: 1
+  port: 8080
+
+web:
+  image: "docker-frontend"
+  tag: "latest"
+  replicaCount: 1
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: "mural.local"

@@ -2,9 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-backend
-  namespace: aula-docker
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: go-backend
 spec:
-  replicas: 1
+  replicas: {{ .Values.api.replicaCount }}
   selector:
     matchLabels:
       app: go-backend
@@ -15,25 +17,28 @@ spec:
     spec:
       containers:
         - name: api
-          image: docker-api:latest
-          imagePullPolicy: Never # Usa a imagem já presente no nó do Kind
+          image: "{{ .Values.api.image }}:{{ .Values.api.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
-              name: http
+            - containerPort: {{ .Values.api.port }}
           env:
-            - name: PORT
-              value: "8080"
             - name: DATABASE_URL
-              value: "postgres://postgres:123456@db:5432/aula-docker-mb?sslmode=disable"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mural.fullname" . }}-secret
+                  key: DATABASE_URL
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: api
-  namespace: aula-docker
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: go-backend
 spec:
+  type: ClusterIP
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: {{ .Values.api.port }}
+      targetPort: {{ .Values.api.port }}
   selector:
     app: go-backend

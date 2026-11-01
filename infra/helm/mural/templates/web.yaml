@@ -2,9 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-frontend
-  namespace: aula-docker
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: nginx-frontend
 spec:
-  replicas: 1
+  replicas: {{ .Values.web.replicaCount }}
   selector:
     matchLabels:
       app: nginx-frontend
@@ -15,21 +17,22 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: docker-frontend:latest
-          imagePullPolicy: Never # Impede o Kubernetes de tentar baixar da internet
+          image: "{{ .Values.web.image }}:{{ .Values.web.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
-              name: http
+            - containerPort: {{ .Values.web.port }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx-frontend
-  namespace: aula-docker
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: nginx-frontend
 spec:
-  type: ClusterIP 
+  type: ClusterIP
   ports:
-    - port: 80
-      targetPort: 80
+    - port: {{ .Values.web.port }}
+      targetPort: {{ .Values.web.port }}
   selector:
     app: nginx-frontend
