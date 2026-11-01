@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-frontend
+  namespace: aula-docker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-frontend
+  template:
+    metadata:
+      labels:
+        app: nginx-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: docker-frontend:latest
+          imagePullPolicy: Never # Impede o Kubernetes de tentar baixar da internet
+          ports:
+            - containerPort: 80
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-frontend
+  namespace: aula-docker
+spec:
+  type: NodePort # Expõe a porta para fora do cluster (equivalente à porta 9090 do Compose)
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30090 # Porta externa acessível no cluster
+  selector:
+    app: nginx-frontend
