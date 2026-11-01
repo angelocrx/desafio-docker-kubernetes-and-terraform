@@ -6,7 +6,7 @@ variable "cluster_name" {
 
 variable "namespace" {
   type        = string
-  default     = "aula-docker"
+  default     = "mural"
   description = "Namespace do Kubernetes"
 }
 
