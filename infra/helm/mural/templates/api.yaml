@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-backend
+  namespace: aula-docker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-backend
+  template:
+    metadata:
+      labels:
+        app: go-backend
+    spec:
+      containers:
+        - name: api
+          image: docker-api:latest
+          imagePullPolicy: Never # Usa a imagem já presente no nó do Kind
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+            - name: DATABASE_URL
+              value: "postgres://postgres:123456@db:5432/aula-docker-mb?sslmode=disable"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: aula-docker
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: go-backend

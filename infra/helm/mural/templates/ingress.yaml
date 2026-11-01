@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mural-ingress
+  namespace: aula-docker
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: mural.local
+      http:
+        paths:
+          # Rotas para a API (Backend)
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8080
+          
+          # Rotas para o Frontend (Nginx)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-frontend
+                port:
+                  number: 80
