@@ -6,10 +6,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: mural.local
-      http:
+    - http: 
         paths:
-          # Rotas para a API (Backend)
           - path: /api(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
@@ -17,8 +15,6 @@ spec:
                 name: api
                 port:
                   number: 8080
-          
-          # Rotas para o Frontend (Nginx)
           - path: /
             pathType: Prefix
             backend:
