@@ -41,7 +41,9 @@ services:
       dockerfile: docker/web.Dockerfile
     container_name: nginx-frontend
     ports:
-      - "9090:80"
+      - "9090:8080"
+    environment:
+      - API_UPSTREAM=api:8080
     depends_on:
       api:
         condition: service_started

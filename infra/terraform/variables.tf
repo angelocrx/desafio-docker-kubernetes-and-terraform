@@ -10,6 +10,12 @@ variable "namespace" {
   description = "Namespace do Kubernetes"
 }
 
+variable "ingress_host" {
+  type        = string
+  default     = "mural.localtest.me"
+  description = "Host do Ingress (localtest.me resolve para 127.0.0.1)"
+}
+
 variable "release_name" {
   type        = string
   default     = "mural-release"

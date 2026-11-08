@@ -11,7 +11,7 @@ locals {
     web = {
       name       = "docker-frontend"
       dockerfile = "docker/web.Dockerfile"
-      sources    = ["web/**", "docker/web.Dockerfile", "docker/nginx.conf"]
+      sources    = ["web/**", "docker/web.Dockerfile"]
     }
   }
 
@@ -140,7 +140,7 @@ resource "helm_release" "mural" {
       image = local.images.web.name
       tag   = terraform_data.image["web"].output
     }
-    ingress = { className = "traefik" }
+    ingress = { host = var.ingress_host }
   })]
 
   set_sensitive {

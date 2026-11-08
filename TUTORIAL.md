@@ -102,7 +102,7 @@ helm install mural ./mural -n mural --create-namespace --set namespace=mural --s
 Quando o `kubectl get pods -n mural` mostrar tudo de pé, abre o túnel e acessa **http://localhost:8080**:
 
 ```bash
-kubectl port-forward svc/nginx-frontend 8080:80 -n mural
+kubectl port-forward svc/nginx-frontend 8080:8080 -n mural
 ```
 
 Para desligar: `kind delete cluster --name mural-helm`.

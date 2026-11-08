@@ -14,8 +14,8 @@ output "helm_release_status" {
 }
 
 output "app_url" {
-  value       = "http://mural.localtest.me"
-  description = "Endereço do Mural (localtest.me resolve para 127.0.0.1)"
+  value       = "http://${var.ingress_host}"
+  description = "Endereço do Mural"
 }
 
 output "kubeconfig_path" {
